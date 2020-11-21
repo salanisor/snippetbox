@@ -10,7 +10,7 @@ metadata:
   name: arch-dummy-generic-webhook-secret
   namespace: arch-dummy
 data:
-  WebHookSecretKey: MTIzNDU2Nzg5Cg==
+  WebHookSecretKey: ODJkNDUwMGU5MDZiMmQyZjI2ZGY4YTcxZWE2ZWM5Mjg5MThjM2YyMAo=
 ---
 kind: Secret
 apiVersion: v1
@@ -18,7 +18,7 @@ metadata:
   name: arch-dummy-github-webhook-secret
   namespace: arch-dummy
 data:
-  WebHookSecretKey: MTIzNDU2Nzg5Cg==
+  WebHookSecretKey: ODJkNDUwMGU5MDZiMmQyZjI2ZGY4YTcxZWE2ZWM5Mjg5MThjM2YyMAo=
 ---
 apiVersion: image.openshift.io/v1
 kind: ImageStream

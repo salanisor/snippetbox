@@ -40,49 +40,86 @@ spec:
     app: cpu-arch-report
 ---
 apiVersion: v1
-kind: Pod
+kind: DeploymentConfig
 metadata:
+  name: cpu-arch-deployment
+  namespace: arch-dummy
   labels:
     app: cpu-arch-report
-  namespace: arch-dummy
-  name: cpu-dummy
+  creationTimestamp: null
 spec:
-  containers:
-  - env:
-    - name: PATH
-      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-    - name: TERM
-      value: xterm
-    - name: container
-      value: oci
-    - name: HOSTNAME
-    #image: quay.io/eduardoarango/arch-dummy:latest
-    image: image-registry.openshift-image-registry.svc:5000/arch-dummy/dummy-arch-info:latest
-
-    name: cpu-dummy
-    # define a liveness probe that checks every 5 seconds, starting after 5 seconds
-    livenessProbe:
-      httpGet:
-        path: /healthz
-        port: 8080
-      initialDelaySeconds: 5
-      periodSeconds: 5
-    # define a readiness probe that checks every 5 seconds
-    readinessProbe:
-      httpGet:
-        path: /healthz
-        port: 8080
-      periodSeconds: 5
-    ports:
-    - containerPort: 8080
-      hostPort: 8080
-      protocol: TCP
+  replicas: 1
+  revisionHistoryLimit: 10
+  #selector:
+  #  matchLabels:
+  #    app: cpu-arch-report
+  strategy:
+    activeDeadLineSeconds: 216000
     resources: {}
-    securityContext:
-      allowPrivilegeEscalation: true
-      capabilities: {}
-      privileged: false
-      readOnlyRootFilesystem: false
-      seLinuxOptions: {}
-    workingDir: /
-status: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cpu-arch-report
+    spec:
+      containers:
+      - env:
+        - name: PATH
+          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: oci
+        - name: HOSTNAME
+        image: image-registry.openshift-image-registry.svc:5000/arch-dummy/dummy-arch-info:latest
+        name: cpu-dummy
+        imagePullPolicy: Always
+        # define a liveness probe that checks every 5 seconds, starting after 5 seconds
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 30
+        terminationMessagePath: /dev/termination-log
+        # define a readiness probe that checks every 5 seconds
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          periodSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          timeoutSeconds: 30
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "300m"
+            memory: "500Mi"
+          requests:
+            cpu: "300m"
+            memory: "500Mi"
+        workingDir: /
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities: {}
+        privileged: false
+        readOnlyRootFilesystem: false
+        # Error creating: pods "cpu-arch-deployment-1-" is forbidden: unable to validate against any security context constraint: [provider restricted: .spec.securityContext.seLinuxOptions.level:
+        # Invalid value: "s0:c26,c20": must be s0:c26,c25
+        #seLinuxOptions:
+        #  level: "s0:c26,c25"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
