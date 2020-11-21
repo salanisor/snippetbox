@@ -8,7 +8,7 @@
 apiVersion: v1
 kind: Route
 metadata:
-  name: cpu-dummy-route
+  name: cpu-arch-route
   namespace: arch-dummy
   labels:
     app: cpu-arch-report
@@ -17,13 +17,13 @@ spec:
   path: "/"
   to:
     kind: Service
-    name: cpu-dummy-svc
+    name: cpu-arch-svc
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: arch-dummy
-  name: cpu-dummy-svc
+  name: cpu-arch-svc
   labels:
     app: cpu-arch-report
 spec:

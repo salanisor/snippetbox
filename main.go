@@ -53,8 +53,8 @@ func hostCPU(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-// yoMomma always checking on you
-func yoMomma(w http.ResponseWriter, r *http.Request) {
+// health of the app
+func health(w http.ResponseWriter, r *http.Request) {
 	// Create a Handler that we can use to register liveness and readiness checks.
 	health := h.NewHandler()
 
@@ -84,7 +84,7 @@ func main() {
 	r.HandleFunc("/healthy", healthy)
 	r.HandleFunc("/version", version)
 	r.HandleFunc("/cpu", hostCPU)
-	r.HandleFunc("/healthz", yoMomma)
+	r.HandleFunc("/healthz", health)
 
 	srv := &http.Server{
 		Addr: "0.0.0.0:8080",
