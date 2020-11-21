@@ -1,11 +1,16 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arch-dummy
+---
 kind: Secret
 apiVersion: v1
 metadata:
   name: arch-dummy-generic-webhook-secret
   namespace: arch-dummy
 data:
-  WebHookSecretKey: 123456789
+  WebHookSecretKey: MTIzNDU2Nzg5Cg==
 ---
 kind: Secret
 apiVersion: v1
@@ -13,9 +18,9 @@ metadata:
   name: arch-dummy-github-webhook-secret
   namespace: arch-dummy
 data:
-  WebHookSecretKey: 123456789
-apiVersion: image.openshift.io/v1
+  WebHookSecretKey: MTIzNDU2Nzg5Cg==
 ---
+apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   labels:
@@ -30,7 +35,7 @@ metadata:
   name: dummy-arch-info
   namespace: arch-dummy
   selfLink: >-
-    /apis/build.openshift.io/v1/namespaces/go-test/buildconfigs/dummy-arch-info
+    /apis/build.openshift.io/v1/namespaces/arch-dummy/buildconfigs/dummy-arch-info
   labels:
     app: dummy-arch-info
     app.kubernetes.io/component: dummy-arch-info
