@@ -8,7 +8,7 @@ RUN CPU_ARCH=$(lscpu |grep -i 'model name'|awk '{print  "\""$3, $4, $5, $6, $7, 
 	GIT_COMMIT=$(git rev-list -1 HEAD) && \
 	BUILT=$(date) && \
 	GO_VERSION=$(go version |awk '{print "\""$3, $4"\""}') && \	
-	GO111MODULE=auto GOOS=linux go build -o dummy -mod=vendor \
+	GO111MODULE='' GOOS=linux go build -o dummy -mod=vendor \
 	-ldflags "-X 'main.GitCommit=${GIT_COMMIT}' -X 'main.Built=${BUILT}' \
 	-X 'main.GoVersion=${GO_VERSION}' \
 	-X 'main.Arch=${CPU_ARCH}'" \
