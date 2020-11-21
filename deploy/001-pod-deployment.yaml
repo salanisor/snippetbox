@@ -1,0 +1,53 @@
+# Generation of Kubernetes YAML is still under development!
+#
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-1.8.1
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: cpu-arch-report
+  namespace: arch-dummy
+  name: cpu-dummy
+spec:
+  containers:
+  - env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: oci
+    - name: HOSTNAME
+    #image: quay.io/eduardoarango/arch-dummy:latest
+    image: image-registry.openshift-image-registry.svc:5000/go-test/dummy-arch-info
+    name: cpu-dummy
+    # define a liveness probe that checks every 5 seconds, starting after 5 seconds
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    # define a readiness probe that checks every 5 seconds
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      periodSeconds: 5
+    ports:
+    - containerPort: 8080
+      hostPort: 8080
+      protocol: TCP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    workingDir: /
+status: {}
