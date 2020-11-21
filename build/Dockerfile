@@ -8,11 +8,11 @@ RUN CPU_ARCH=$(lscpu |grep -i 'model name'|awk '{print  "\""$3, $4, $5, $6, $7, 
 	GIT_COMMIT=$(git rev-list -1 HEAD) && \
 	BUILT=$(date) && \
 	GO_VERSION=$(go version |awk '{print "\""$3, $4"\""}') && \	
-	GO111MODULE='' GOOS=linux go build -o dummy -mod=vendor \
+	GO111MODULE='' GOOS=linux go build -o cmd/dummy -mod=vendor \
 	-ldflags "-X 'main.GitCommit=${GIT_COMMIT}' -X 'main.Built=${BUILT}' \
 	-X 'main.GoVersion=${GO_VERSION}' \
 	-X 'main.Arch=${CPU_ARCH}'" \
-	/go/src/github.com/salanisor/snippetbox/cmd/dummy
+       /go/src/github.com/salanisor/snippetbox/
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 COPY --from=builder /go/src/github.com/salanisor/snippetbox/cmd/dummy /usr/bin/
