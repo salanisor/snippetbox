@@ -1,4 +1,4 @@
-####  Test builds in OpenShift v4.x
+####  Test builds on OpenShift v4.x
 
 ###### Requirements:
 * Access to an OpenShift cluster with the ability to create new namespaces.
