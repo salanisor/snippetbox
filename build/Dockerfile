@@ -15,7 +15,7 @@ RUN CPU_ARCH=$(lscpu |grep -i 'model name'|awk '{print  "\""$3, $4, $5, $6, $7, 
 	/go/src/github.com/salanisor/snippetbox/cmd/dummy
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal
-COPY --from=builder /go/src/github.com/salanisor/snippetbox/dummy /usr/bin/
+COPY --from=builder /go/src/github.com/salanisor/snippetbox/cmd/dummy /usr/bin/
 
 USER 1001
 
