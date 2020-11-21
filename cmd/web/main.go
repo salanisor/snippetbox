@@ -28,6 +28,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/klauspost/cpuid"
+        h "github.com/heptiolabs/healthcheck"
 )
 
 var GitCommit string
@@ -35,9 +36,9 @@ var Arch string
 var Built string
 var GoVersion string
 
-// blank returns
-func blank(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("A dummy server that retrieves basic info from the host"))
+// health return
+func healthy(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("API accepting connections"))
 }
 
 // version returns the api version
@@ -52,15 +53,38 @@ func hostCPU(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
+// yoMomma always checking on you
+func yoMomma(w http.ResponseWriter, r *http.Request) {
+	// Create a Handler that we can use to register liveness and readiness checks.
+	health := h.NewHandler()
+
+	// Add a readiness check against the health of an upstream HTTP dependency
+	upstreamURL := "http://0.0.0.0:8080/healthy"
+	health.AddReadinessCheck(
+		"upstream-dep-http",
+		h.HTTPGetCheck(upstreamURL, 500*time.Millisecond))
+
+	// Implement a custom check with a 50 millisecond timeout.
+	health.AddLivenessCheck("custom-check-timeout", h.GoroutineCountCheck(100))
+
+	// Expose the readiness endpoints on a custom path /healthz mixed into
+	// our main application mux.
+	mux := http.NewServeMux()
+	mux.HandleFunc("/healthz", health.ReadyEndpoint)
+
+	// Sleep for just a moment to make sure our Async handler had a chance to run
+	time.Sleep(500 * time.Millisecond)
+}
 func main() {
 	var wait time.Duration
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", blank)
+	r.HandleFunc("/healthy", healthy)
 	r.HandleFunc("/version", version)
 	r.HandleFunc("/cpu", hostCPU)
+	r.HandleFunc("/healthz", yoMomma)
 
 	srv := &http.Server{
 		Addr: "0.0.0.0:8080",
