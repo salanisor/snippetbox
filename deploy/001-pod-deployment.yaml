@@ -14,7 +14,7 @@ metadata:
     app: cpu-arch-report
 spec:
   host: cpu-dummy.apps.ocp4.freebsd.us
-  path: "/healthy"
+  path: "/"
   to:
     kind: Service
     name: cpu-dummy-svc
